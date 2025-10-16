@@ -72,6 +72,9 @@ class TradingAgentsGraph:
         )
 
         # Initialize LLMs
+        print(f'Initializing LLMs with backend_url--------: {self.config["backend_url"]}')
+        print(f'Initializing LLMs with quick_think_llm--------: {self.config["quick_think_llm"]}')
+        print(f'Initializing LLMs with deep_think_llm--------: {self.config["deep_think_llm"]}')
         if self.config["llm_provider"].lower() == "openai" or self.config["llm_provider"] == "ollama" or self.config["llm_provider"] == "openrouter":
             self.deep_thinking_llm = ChatOpenAI(model=self.config["deep_think_llm"], base_url=self.config["backend_url"])
             self.quick_thinking_llm = ChatOpenAI(model=self.config["quick_think_llm"], base_url=self.config["backend_url"])
