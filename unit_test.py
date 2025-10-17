@@ -4,14 +4,14 @@ from tradingagents.graph.trading_graph import TradingAgentsGraph
 from tradingagents.default_config import DEFAULT_CONFIG
 
 load_dotenv()
-print(f'OPENAI_API_KEY---------:{os.environ.get("OPENAI_API_KEY")}')
 
 # Create a custom config
 config = DEFAULT_CONFIG.copy()
 config["llm_provider"] = "openrouter"
 config["backend_url"] = "https://openrouter.ai/api/v1"
-config["deep_think_llm"] = "deepseek/deepseek-chat-v3-0324:free"  # Use a different model
-config["quick_think_llm"] = "meta-llama/llama-4-scout:free"  # Use a different model
+config["embed_provider"] = "dashscope"
+config["deep_think_llm"] = "openai/gpt-oss-20b"  # Use a different model
+config["quick_think_llm"] = "meta-llama/llama-3.1-8b-instruct"  # Use a different model
 config["max_debate_rounds"] = 1  # Increase debate rounds
 
 # Configure data vendors (default uses yfinance and Alpha Vantage)

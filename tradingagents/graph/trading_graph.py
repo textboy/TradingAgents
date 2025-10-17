@@ -72,9 +72,6 @@ class TradingAgentsGraph:
         )
 
         # Initialize LLMs
-        print(f'Initializing LLMs with backend_url--------: {self.config["backend_url"]}')
-        print(f'Initializing LLMs with quick_think_llm--------: {self.config["quick_think_llm"]}')
-        print(f'Initializing LLMs with deep_think_llm--------: {self.config["deep_think_llm"]}')
         if self.config["llm_provider"].lower() == "openai" or self.config["llm_provider"] == "ollama" or self.config["llm_provider"] == "openrouter":
             self.deep_thinking_llm = ChatOpenAI(model=self.config["deep_think_llm"], base_url=self.config["backend_url"])
             self.quick_thinking_llm = ChatOpenAI(model=self.config["quick_think_llm"], base_url=self.config["backend_url"])
@@ -193,7 +190,7 @@ class TradingAgentsGraph:
         self._log_state(trade_date, final_state)
 
         # Return decision and processed signal
-        return final_state, self.process_signal(final_state["final_trade_decision"])
+        return final_state, self.process_signal(final_state["final_trade_decision"], company_name)
 
     def _log_state(self, trade_date, final_state):
         """Log the final state to a JSON file."""
@@ -255,6 +252,6 @@ class TradingAgentsGraph:
             self.curr_state, returns_losses, self.risk_manager_memory
         )
 
-    def process_signal(self, full_signal):
+    def process_signal(self, full_signal, company_name=None):
         """Process a signal to extract the core decision."""
-        return self.signal_processor.process_signal(full_signal)
+        return self.signal_processor.process_signal(full_signal, company_name)

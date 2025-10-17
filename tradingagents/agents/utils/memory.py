@@ -1,3 +1,4 @@
+import os
 import chromadb
 from chromadb.config import Settings
 from openai import OpenAI
@@ -5,11 +6,16 @@ from openai import OpenAI
 
 class FinancialSituationMemory:
     def __init__(self, name, config):
-        if config["backend_url"] == "http://localhost:11434/v1":
+        if config["embed_provider"] == "ollama":
+            self.client = OpenAI(base_url="http://localhost:11434/v1")
             self.embedding = "nomic-embed-text"
+        elif config["embed_provider"] == "dashscope":
+            self.client = OpenAI(base_url="https://dashscope.aliyuncs.com/compatible-mode/v1", api_key=os.environ.get("DASHSCOPE_API_KEY"))
+            self.embedding = "text-embedding-v4"
         else:
+            self.client = OpenAI(base_url=config["backend_url"], api_key=os.environ.get("OPENAI_API_KEY"))
             self.embedding = "text-embedding-3-small"
-        self.client = OpenAI(base_url=config["backend_url"])
+
         self.chroma_client = chromadb.Client(Settings(allow_reset=True))
         self.situation_collection = self.chroma_client.create_collection(name=name)
 
