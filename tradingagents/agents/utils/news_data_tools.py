@@ -36,6 +36,7 @@ def get_global_news(
     Returns:
         str: A formatted string containing global news data
     """
+    print(f'DEBUG get_global_news: route_to_vendor {curr_date}, {limit}')
     return route_to_vendor("get_global_news", curr_date, look_back_days, limit)
 
 @tool

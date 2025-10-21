@@ -216,13 +216,14 @@ def _get_stock_stats_bulk(
             raise Exception("Stockstats fail: Yahoo Finance data not fetched yet!")
     else:
         # Online data fetching with caching
-        today_date = pd.Timestamp.today()
+        # today_date = pd.Timestamp.today()
         curr_date_dt = pd.to_datetime(curr_date)
         
-        end_date = today_date
-        start_date = today_date - pd.DateOffset(years=15)
+        # end_date = today_date
+        start_date = curr_date_dt - pd.DateOffset(years=15)
         start_date_str = start_date.strftime("%Y-%m-%d")
-        end_date_str = end_date.strftime("%Y-%m-%d")
+        # end_date_str = end_date.strftime("%Y-%m-%d")
+        end_date_str = curr_date
         
         os.makedirs(config["data_cache_dir"], exist_ok=True)
         
@@ -230,6 +231,7 @@ def _get_stock_stats_bulk(
             config["data_cache_dir"],
             f"{symbol}-YFin-data-{start_date_str}-{end_date_str}.csv",
         )
+        print(f'DEBUG _get_stock_stats_bulk data_file: {data_file}')
         
         if os.path.exists(data_file):
             data = pd.read_csv(data_file)

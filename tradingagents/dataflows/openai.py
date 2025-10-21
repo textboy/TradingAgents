@@ -38,6 +38,7 @@ def get_stock_news_openai(query, start_date, end_date):
 
 
 def get_global_news_openai(curr_date, look_back_days=7, limit=5):
+    print(f'DEBUG get_global_news_openai: {curr_date}, {look_back_days}, {limit}')
     config = get_config()
     client = OpenAI(base_url=config["backend_url"])
 
@@ -69,7 +70,8 @@ def get_global_news_openai(curr_date, look_back_days=7, limit=5):
         store=True,
     )
 
-    return response.output[1].content[0].text
+    # change from output[1] to output[0] as out of list range
+    return response.output[0].content[0].text
 
 
 def get_fundamentals_openai(ticker, curr_date):
