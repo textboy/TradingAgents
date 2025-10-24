@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 import time
 import json
@@ -10,6 +11,7 @@ def create_social_media_analyst(llm):
         current_date = state["trade_date"]
         ticker = state["company_of_interest"]
         company_name = state["company_of_interest"]
+        start_date = (datetime.strptime(current_date, '%Y-%m-%d') - timedelta(days=7)).strftime("%Y-%m-%d")
 
         tools = [
             get_news,
@@ -17,7 +19,29 @@ def create_social_media_analyst(llm):
 
         system_message = (
             "You are a social media and company specific news researcher/analyst tasked with analyzing social media posts, recent company news, and public sentiment for a specific company over the past week. You will be given a company's name your objective is to write a comprehensive long report detailing your analysis, insights, and implications for traders and investors on this company's current state after looking at social media and what people are saying about that company, analyzing sentiment data of what people feel each day about the company, and looking at recent company news. Use the get_news(query, start_date, end_date) tool to search for company-specific news and social media discussions. Try to look at all sources possible from social media to sentiment to news. Do not simply state the trends are mixed, provide detailed and finegrained analysis and insights that may help traders make decisions."
-            + """ Make sure to append a Markdown table at the end of the report to organize key points in the report, organized and easy to read.""",
+            + """ Make sure to append a Markdown table at the end of the report to organize key points in the report, organized and easy to read."""
+            + """Key Points of Analysis:
+- Trends and reasons behind changes in investor sentiment
+- Opinions and influence of key opinion leaders (KOLs)
+- Impact of hot events on stock price expectations
+- Policy interpretation and changes in market expectations
+- Differences between retail investor sentiment and institutional viewpoints
+"""
+            + """Sentiment Impact Analysis Requirements:
+- Quantify the intensity of investor sentiment (optimism/pessimism)
+- Assess the impact of sentiment changes on short-term stock prices (1-5 days)
+- Analyze the correlation between retail investor sentiment and stock price trends
+- Identify sentiment-driven support and resistance levels
+- Provide price expectation adjustments based on sentiment analysis
+- Evaluate the extent of market sentiment's impact on valuations
+- Responding with 'cannot assess sentiment impact' or 'more data needed' is not allowed
+"""
+            + """Must include:
+- Sentiment index score (1-10 points)
+- Expected price fluctuation range
+- Trading timing recommendations based on sentiment
+"""
+            + "You must first use the tool to obtain the data, and then perform analysis based on the data."
         )
 
         prompt = ChatPromptTemplate.from_messages(

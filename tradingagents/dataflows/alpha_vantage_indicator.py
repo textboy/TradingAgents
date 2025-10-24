@@ -1,4 +1,6 @@
-from .alpha_vantage_common import _make_api_request
+from .alpha_vantage_common import _make_api_request, get_api_key
+from datetime import datetime, timedelta
+import requests
 
 def get_indicator(
     symbol: str,
@@ -220,3 +222,38 @@ def get_indicator(
     except Exception as e:
         print(f"Error getting Alpha Vantage indicator data for {indicator}: {e}")
         return f"Error retrieving {indicator} data: {str(e)}"
+
+def get_close_price(
+        symbol: str,
+) -> str:
+    """
+    Returns Alpha Vantage close price.
+
+    Args:
+        symbol: ticker symbol of the company
+
+    Returns:
+        String containing close price information
+    """
+
+    # Get yesterday's date
+    yesterday = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
+
+    API_BASE_URL = "https://www.alphavantage.co/query"
+    function_name = 'TIME_SERIES_DAILY'
+    api_params = {
+            "function": function_name,
+            "apikey": get_api_key(),
+            "symbol": symbol,
+    }
+    response = requests.get(API_BASE_URL, params=api_params)
+    if "Error" in response.text:
+        return f"Error: retrieving close price data: {response.json()['Error Message']}"
+    response.raise_for_status()
+    # print(response.text)
+    if "Time Series (Daily)" not in response.json():
+        return f"Error: Time Series (Daily) not found in alphavantage"
+    if yesterday not in response.json()["Time Series (Daily)"]:
+        return f"Error: No data for date {yesterday} in alphavantage Time Series (Daily)"
+    yesterday_close_price = response.json()["Time Series (Daily)"][yesterday]['4. close']
+    return yesterday_close_price

@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 import time
 import json
@@ -9,6 +10,7 @@ def create_news_analyst(llm):
     def news_analyst_node(state):
         current_date = state["trade_date"]
         ticker = state["company_of_interest"]
+        start_date = (datetime.strptime(current_date, '%Y-%m-%d') - timedelta(days=7)).strftime("%Y-%m-%d")
 
         tools = [
             get_news,
@@ -16,8 +18,32 @@ def create_news_analyst(llm):
         ]
 
         system_message = (
-            "You are a news researcher tasked with analyzing recent news and trends over the past week. Please write a comprehensive report of the current state of the world that is relevant for trading and macroeconomics. Use the available tools: get_news(query, start_date, end_date) for company-specific or targeted news searches, and get_global_news(curr_date, look_back_days, limit) for broader macroeconomic news. Do not simply state the trends are mixed, provide detailed and finegrained analysis and insights that may help traders make decisions."
+            "You are a news researcher tasked with analyzing recent news and trends over the past week. Please write a comprehensive report of the current state of the world that is relevant for trading and macroeconomics. "
+            + "Use the available tools: get_news(ticker, start_date, end_date) for company-specific or targeted news searches, and get_global_news(curr_date, look_back_days, limit) for broader macroeconomic news. Do not simply state the trends are mixed, provide detailed and finegrained analysis and insights that may help traders make decisions."
             + """ Make sure to append a Markdown table at the end of the report to organize key points in the report, organized and easy to read."""
+            + """Types of news to focus on:
+- Earnings releases and performance guidance
+- Major partnerships and mergers & acquisitions
+- Policy changes and regulatory developments
+- Emergencies and crisis management
+- Industry trends and technological breakthroughs
+- Management changes and strategic adjustments
+"""
+            + """Price Impact Analysis Requirements:
+- Assess the short-term impact of news on stock prices (1-3 days)
+- Analyze possible price fluctuation ranges (percentage)
+- Provide price adjustment recommendations based on the news
+- Identify key price support and resistance levels
+- Evaluate the impact of news on long-term investment value
+- Responses such as 'cannot assess price impact' or 'more information needed' are not allowed
+"""
+            + """Please pay special attention:
+- If there is a delay in the news data (more than 2 hours), clearly indicate the timeliness limitations in the analysis.
+- Prioritize analyzing the latest and highly relevant news events.
+- Provide a quantitative assessment of the news' impact on stock prices and specific price expectations.
+- Must include an analysis of the price impact based on the news and adjustment recommendations.
+"""
+            + "You must first use the tool to obtain the data, and then perform analysis based on the data."
         )
 
         prompt = ChatPromptTemplate.from_messages(

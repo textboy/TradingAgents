@@ -1,6 +1,7 @@
 import functools
 import time
 import json
+import tradingagents.dataflows.alpha_vantage_indicator as avi
 
 
 def create_trader(llm, memory):
@@ -22,6 +23,8 @@ def create_trader(llm, memory):
         else:
             past_memory_str = "No past memories found."
 
+        close_price = avi.get_close_price(company_name)
+
         context = {
             "role": "user",
             "content": f"Based on a comprehensive analysis by a team of analysts, here is an investment plan tailored for {company_name}. This plan incorporates insights from current technical market trends, macroeconomic indicators, and social media sentiment. Use this plan as a foundation for evaluating your next trading decision.\n\nProposed Investment Plan: {investment_plan}\n\nLeverage these insights to make an informed and strategic decision.",
@@ -32,7 +35,7 @@ def create_trader(llm, memory):
                 "role": "system",
                 "content": f"""You are a trading agent analyzing market data to make investment decisions. Based on your analysis, always include the following key information in your analysis:
 1. **PROPOSAL**: **BUY/HOLD/SELL**' to confirm your recommendation.
-2. **TARGET PRICE**: A reasonable target price with currency based on analysis - Required to provide a specific value
+2. **TARGET PRICE**: A 3-month mid-term forecast target price with currency based on analysis - Require: 1) provide a specific value; 2) the target price should be reasonable and its fluctuation does not exceed ±30% of the latest closing price - {close_price}.
 3. **CONFIDENCE**: The degree of confidence in the decision (between 0 and 1)
 4. **RISK SCORE**: Investment risk level (between 0 and 1, 0 is low risk and 1 is high risk)
 5. **RATIONALE**: A brief explanation of the reasoning behind the decision.
