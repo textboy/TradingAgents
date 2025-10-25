@@ -1,5 +1,6 @@
 import time
 import json
+import tradingagents.dataflows.alpha_vantage_indicator as avi
 
 
 def create_research_manager(llm, memory):
@@ -11,6 +12,7 @@ def create_research_manager(llm, memory):
         fundamentals_report = state["fundamentals_report"]
 
         investment_debate_state = state["investment_debate_state"]
+        company_name = state["company_of_interest"]
 
         curr_situation = f"{market_research_report}\n\n{sentiment_report}\n\n{news_report}\n\n{fundamentals_report}"
         past_memories = memory.get_memories(curr_situation, n_matches=2)
@@ -18,6 +20,8 @@ def create_research_manager(llm, memory):
         past_memory_str = ""
         for i, rec in enumerate(past_memories, 1):
             past_memory_str += rec["recommendation"] + "\n\n"
+
+        close_price = avi.get_close_price(company_name)
 
         prompt = f"""As the portfolio manager and debate facilitator, your role is to critically evaluate this round of debate and make a definitive decision: align with the bear analyst, the bull analyst, or choose Hold only if it is strongly justified based on the arguments presented.
 
@@ -28,10 +32,28 @@ Additionally, develop a detailed investment plan for the trader. This should inc
 Your Recommendation: A decisive stance supported by the most convincing arguments.
 Rationale: An explanation of why these arguments lead to your conclusion.
 Strategic Actions: Concrete steps for implementing the recommendation.
+
+Target Price Analysis: Based on all available reports (fundamentals, market, news, sentiment, latest close price), provide a comprehensive target price range and specific target price. Consider: 
+- Fundamental valuations in the reports
+- Impact of news on price expectations
+- Sentiment-driven price adjustments
+- Technical support/resistance levels
+- Risk-adjusted price scenarios (conservative, base, optimistic)
+- Time horizons for price targets (1 month, 3 months, 6 months)
+- The target price should be reasonable and its fluctuation does not exceed ±30% of the latest closing price - {close_price}.
+- For buy recommendations, ensure to include a phased exit price range.
+
 Take into account your past mistakes on similar situations. Use these insights to refine your decision-making and ensure you are learning and improving. Present your analysis conversationally, as if speaking naturally, without special formatting. 
 
 Here are your past reflections on mistakes:
 \"{past_memory_str}\"
+
+The following is a comprehensive analysis report:
+Fundamental Analysis: {fundamentals_report}
+Market Research: {market_research_report}
+News Analysis: {news_report}
+Sentiment Analysis: {sentiment_report}
+The latest close price: {close_price}
 
 Here is the debate:
 Debate History:
