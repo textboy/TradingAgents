@@ -37,7 +37,7 @@ def get_stock_news_openai(query, start_date, end_date):
     return response.output[1].content[0].text
 
 
-def get_global_news_openai(curr_date, look_back_days=7, limit=5):
+def get_global_news_openai(curr_date, look_back_days=7, limit=10):
     print(f'DEBUG get_global_news_openai: {curr_date}, {look_back_days}, {limit}')
     config = get_config()
     client = OpenAI(base_url=config["backend_url"])
@@ -50,7 +50,28 @@ def get_global_news_openai(curr_date, look_back_days=7, limit=5):
                 "content": [
                     {
                         "type": "input_text",
-                        "text": f"Can you search global or macroeconomics news from {look_back_days} days before {curr_date} to {curr_date} that would be informative for trading purposes? Make sure you only get the data posted during that period. Limit the results to {limit} articles.",
+                        "text": f"Can you search global or macroeconomics news from {look_back_days} days before {curr_date} to {curr_date} that would be informative for trading purposes? Make sure you only get the data posted during that period. Limit the results to {limit} articles." + 
+                        """
+try to cover below topics:
+U.S. inflation
+U.S. government budget
+U.S. GDP growth
+U.S. unemployment rate
+foreign exchange
+oil
+U.S. PMI (Purchasing Managers' Index)
+U.S. CPI (Consumer Price Index)
+gold
+soybeans
+U.S. breaking news
+international breaking news
+summit meetings
+relationship between U.S. and Europe
+relationship between U.S. and Russia
+relationship between U.S. and China
+manufacturing
+technology
+""",
                     }
                 ],
             }

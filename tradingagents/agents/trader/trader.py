@@ -38,7 +38,8 @@ def create_trader(llm, memory):
 2. **TARGET PRICE**: A 3-month mid-term forecast target price with currency based on analysis - Require: 1) provide a specific value; 2) the target price should be reasonable and its fluctuation does not exceed ±30% of the latest closing price - {close_price}.
 3. **CONFIDENCE**: The degree of confidence in the decision (between 0 and 1)
 4. **RISK SCORE**: Investment risk level (between 0 and 1, 0 is low risk and 1 is high risk)
-5. **RATIONALE**: A brief explanation of the reasoning behind the decision.
+5. **LAST CLOSE PRICE**: {close_price}
+6. **RATIONALE**: A brief explanation of the reasoning behind the decision.
 
 Target Price Calculation Guidelines:
 - Based on valuation data from fundamental analysis (P/E, P/B, DCF, etc.)
