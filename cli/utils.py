@@ -150,6 +150,7 @@ def select_shallow_thinking_agent(provider) -> str:
             ("google/gemini-2.0-flash-exp:free - Gemini Flash 2.0 offers a significantly faster time to first token", "google/gemini-2.0-flash-exp:free"),
             ("Meta - llama-3.1-8b-instruct.", "meta-llama/llama-3.1-8b-instruct"),
             ("OpenAI - gpt-oss-20b.", "openai/gpt-oss-20b"),
+            ("Deepseek-v3.2-exp.", "deepseek/deepseek-v3.2-exp"),
         ],
         "ollama": [
             ("llama3.1 local", "llama3.1"),
@@ -210,10 +211,10 @@ def select_deep_thinking_agent(provider) -> str:
             ("Gemini 2.5 Pro", "gemini-2.5-pro-preview-06-05"),
         ],
         "openrouter": [
-            ("DeepSeek V3 - a 685B-parameter, mixture-of-experts model", "deepseek/deepseek-chat-v3-0324:free"),
-            ("Deepseek - latest iteration of the flagship chat model family from the DeepSeek team.", "deepseek/deepseek-chat-v3-0324:free"),
+            ("DeepSeek-v3-free - a 685B-parameter, mixture-of-experts model", "deepseek/deepseek-chat-v3-0324:free"),
             ("OpenAI - gpt-oss-20b.", "openai/gpt-oss-20b"),
             ("X-AI - grok-4-fast.", "x-ai/grok-4-fast"),
+            ("Deepseek-v3.2-exp.", "deepseek/deepseek-v3.2-exp"),
         ],
         "ollama": [
             ("llama3.1 local", "llama3.1"),
